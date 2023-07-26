@@ -63,7 +63,9 @@ class File
             "size" => strlen($objectContent)
         ]);
 
-        $fileType = mime_content_type($objectName);
+        $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
+        $fileType = finfo_buffer($fileInfo, $objectContent);
+        finfo_close($fileInfo);
 
         AmazonService::addHeader("Content-Type", $fileType);
         AmazonService::setEndpoint("/{$bucketName}/{$objectName}");
