@@ -1,0 +1,32 @@
+{
+  "name": "elxdigital/amazon-service",
+  "description": "Componente de integração com os serviços da AWS :)",
+  "keywords": [
+    "Object Storage",
+    "R2",
+    "S3",
+    "AWS",
+    "cloudflare"
+  ],
+  "homepage": "https://www.ellox.com.br",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ellox Inteligência Digital",
+      "email": "desenvolvimento@ellox.com.br",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=8.0",
+    "ext-curl": "*",
+    "ext-simplexml": "*",
+    "guzzlehttp/guzzle": "^7.7",
+    "ext-fileinfo": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "ElxDigital\\AmazonService\\": "src"
+    }
+  }
+}
