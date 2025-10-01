@@ -78,6 +78,28 @@ class File
     /**
      * @param string $bucketName
      * @param string $objectName
+     * @param $resource
+     * @param string $contentType
+     * @return bool
+     * @throws Exception
+     */
+    public function createObjectStreamed(string $bucketName, string $objectName, $resource, string $contentType): bool
+    {
+        if (!$bucketName || !$objectName || !is_resource($resource)) {
+            throw new \Exception("Parâmetros inválidos");
+        }
+
+        AmazonService::addHeader("Content-Type", $contentType);
+        AmazonService::setEndpoint("/{$bucketName}/{$objectName}");
+        AmazonService::setParams($resource);
+        AmazonService::putStreamed();
+
+        return AmazonService::getCallback();
+    }
+
+    /**
+     * @param string $bucketName
+     * @param string $objectName
      * @return bool
      * @throws Exception
      */
