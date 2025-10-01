@@ -45,54 +45,26 @@ class File
      * @return bool
      * @throws Exception
      */
-    public function createObject(string $bucketName, string $objectName, string $objectContent): bool
+    public function createObject(string $bucketName, string $objectName, string $objectContent, ?string $contentType = null): bool
     {
-        if (!$bucketName) {
-            throw new Exception("Bucket name is required");
-        }
+        if (!$bucketName) throw new Exception("Bucket name is required");
+        if (!$objectName) throw new Exception("Object name is required");
+        if ($objectContent === '' || $objectContent === null) throw new Exception("Object content is required");
 
-        if (!$objectName) {
-            throw new Exception("Object name is required");
-        }
-
-        if (!$objectContent) {
-            throw new Exception("Object content is required");
+        if (!$contentType) {
+            $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
+            $contentType = finfo_buffer($fileInfo, $objectContent) ?: 'application/octet-stream';
+            finfo_close($fileInfo);
         }
 
         $context = Utils::streamFor($objectContent, [
             "size" => strlen($objectContent)
         ]);
 
-        $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
-        $fileType = finfo_buffer($fileInfo, $objectContent);
-        finfo_close($fileInfo);
-
-        AmazonService::addHeader("Content-Type", $fileType);
+        AmazonService::addHeader("Content-Type", $contentType);
         AmazonService::setEndpoint("/{$bucketName}/{$objectName}");
         AmazonService::setParams($context);
         AmazonService::put();
-
-        return AmazonService::getCallback();
-    }
-
-    /**
-     * @param string $bucketName
-     * @param string $objectName
-     * @param $resource
-     * @param string $contentType
-     * @return bool
-     * @throws Exception
-     */
-    public function createObjectStreamed(string $bucketName, string $objectName, $resource, string $contentType): bool
-    {
-        if (!$bucketName || !$objectName || !is_resource($resource)) {
-            throw new \Exception("Parâmetros inválidos");
-        }
-
-        AmazonService::addHeader("Content-Type", $contentType);
-        AmazonService::setEndpoint("/{$bucketName}/{$objectName}");
-        AmazonService::setParams($resource);
-        AmazonService::putStreamed();
 
         return AmazonService::getCallback();
     }
